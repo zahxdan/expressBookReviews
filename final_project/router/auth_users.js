@@ -46,36 +46,35 @@ regd_users.post("/login", (req, res) => {
 
 // Task 9: Add or Modify a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-    const isbn = req.params.isbn;
-    let filtered_book = books[isbn];
-    if (filtered_book) {
-        let review = req.query.review;
-        let reviewer = req.session.authorization['username'];
-        if (review) {
-            filtered_book['reviews'][reviewer] = review;
-            books[isbn] = filtered_book;
-        }
-        res.send(`The review for the book with ISBN ${isbn} has been added/updated.`);
-    } else {
-        res.send("Unable to find book!");
-    }
+  const isbn = req.params.isbn;
+  const review = req.query.review;
+  const username = req.session.authorization.username;
+  
+  if (books[isbn]) {
+    books[isbn].reviews[username] = review;
+    // Output HARUS JSON seperti di bawah ini
+    return res.status(200).json({
+      message: "Review added/updated successfully",
+      reviews: books[isbn].reviews
+    });
+  }
+  return res.status(404).json({message: "Book not found"});
 });
 
 // Task 10: Delete a book review
 regd_users.delete("/auth/review/:isbn", (req, res) => {
-    const isbn = req.params.isbn;
-    const username = req.session.authorization['username'];
-    if (books[isbn]) {
-        if (books[isbn].reviews[username]) {
-            delete books[isbn].reviews[username];
-            res.send(`Reviews for the ISBN ${isbn} posted by the user ${username} deleted.`);
-        } else {
-            res.send("Review not found for this user.");
-        }
-    } else {
-        res.send("Invalid ISBN");
-    }
+  const isbn = req.params.isbn;
+  const username = req.session.authorization.username;
+  
+  if (books[isbn] && books[isbn].reviews[username]) {
+    delete books[isbn].reviews[username];
+    return res.status(200).json({
+      message: `Review for ISBN ${isbn} deleted successfully`
+    });
+  }
+  return res.status(404).json({message: "Review not found"});
 });
+
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
