@@ -73,3 +73,34 @@ public_users.get('/review/:isbn',function (req, res) {
 });
 
 module.exports.general = public_users;
+
+// Task 6: Get book review based on ISBN (Versi Promise untuk Task 11)
+public_users.get('/review/:isbn', function (req, res) {
+  const getReview = new Promise((resolve, reject) => {
+    const isbn = req.params.isbn;
+    if (books[isbn]) {
+      resolve(books[isbn].reviews);
+    } else {
+      reject({ message: "Buku tidak ditemukan" });
+    }
+  });
+
+  getReview.then(
+    (reviews) => res.send(JSON.stringify(reviews, null, 4)),
+    (err) => res.status(404).json(err)
+  );
+});
+
+// Task 7: Register a new user
+public_users.post("/register", (req, res) => {
+  const { username, password } = req.body;
+  if (username && password) {
+    const userExists = users.filter((u) => u.username === username);
+    if (userExists.length === 0) {
+      users.push({ "username": username, "password": password });
+      return res.status(200).json({ message: "User successfully registered. Now you can login" });
+    }
+    return res.status(404).json({ message: "User already exists!" });
+  }
+  return res.status(404).json({ message: "Unable to register user." });
+});
