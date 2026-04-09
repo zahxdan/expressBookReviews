@@ -20,3 +20,8 @@ app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
 app.listen(PORT,()=>console.log("Server is running"));
+
+if(jwt.verify(token, "access")){
+    req.user = user;
+    next(); // <--- PASTIKAN BARIS INI ADA!
+}
