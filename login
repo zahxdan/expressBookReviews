@@ -1,1 +1,1 @@
-{"message":"Yet to be implemented"}
+{"message":"User successfully logged in"}

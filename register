@@ -1,1 +1,1 @@
-{"messages":"User successfully registered. Now you can login"}
+curl -X POST -H "Content-Type: application/json" -d '{"username":"zahdan","password":"123"}' localhost:5000/customer/login -c cookie.txt
